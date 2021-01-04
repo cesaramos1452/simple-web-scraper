@@ -2,6 +2,8 @@ import argparse
 import requests
 import re
 import sys
+from bs4 import BeautifulSoup
+
 
 """SIMPLE WEB SCRAPER BY CESAR RAMOS"""
 head_1 = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 '
@@ -17,7 +19,17 @@ def url(site):
     url_pattern = (
         r"""http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F]
         [0-9a-fA-F]))+""")
-    return re.findall(url_pattern, site)
+    URLS = re.findall(url_pattern, site)
+    soup = BeautifulSoup(site, 'lxml')
+    img = soup.find_all('img')
+    a = soup.find_all('a')
+    all_img = re.findall(url_pattern, str(img))
+    all_a = re.findall(url_pattern, str(a))
+    for url in all_img:
+        URLS.append(url)
+    for url in all_a:
+        URLS.append(url)
+    return URLS
 
 
 def email(site):
